@@ -1,0 +1,7 @@
+[package]
+name = "polyomino"
+version = "0.1.0"
+authors = ["Maros Grego"]
+edition = "2018"
+
+[dependencies]
