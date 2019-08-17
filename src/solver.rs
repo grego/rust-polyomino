@@ -97,6 +97,15 @@ impl Solver {
             removed_rows.push(row);
             self.solution.push(row);
             solutions.append(&mut self.solve_next(depth + 1));
+
+            for rr in removed_rows.iter().rev() {
+                self.rows.restore(*rr);
+            }
+            for rc in removed_cols.iter().rev() {
+                self.columns.restore(*rc);
+            }
         }
+
+        solutions
     }
 }
