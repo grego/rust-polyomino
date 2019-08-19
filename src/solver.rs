@@ -9,6 +9,7 @@ use crate::tiles::Tiles;
 const EXPECTED_ROWS: usize = 3600;
 const REMOVED_ROWS_CAP: usize = 256;
 const REMOVED_COLS_CAP: usize = 32;
+const SOLUTINON_CAP: usize = 32;
 const MAX_PARALLEL_DEPTH: u16 = 3;
 
 type Solution = Vec<usize>;
@@ -21,7 +22,7 @@ pub struct CoverMatrix {
 #[derive(Clone)]
 pub struct Solver {
     matrix: Arc<CoverMatrix>,
-    columns: HeadList,
+    cols: HeadList,
     rows: HeadList,
     solution: Solution,
 }
@@ -67,13 +68,24 @@ impl CoverMatrix {
 }
 
 impl Solver {
-    fn solve_next(&mut self, depth: u16) -> LinkedList<Solution> {
-        let solutions = LinkedList::new();
+    pub fn new(matrix: CoverMatrix) -> Self {
+        let width = matrix.data.width();
+        let height = matrix.data.height();
+        Solver {
+            rows: HeadList::new(height),
+            cols: HeadList::new(width),
+            matrix: Arc::new(matrix),
+            solution: Vec::with_capacity(SOLUTINON_CAP),
+        }
+    }
+    
+    pub fn solve_next(&mut self, depth: u16) -> LinkedList<Solution> {
+        let mut solutions = LinkedList::new();
         let (min, mincol) = match self
-            .columns
+            .cols
             .iter()
             .map(|y| (self.rows.iter().filter(|&x| self.matrix.data[(x, y)]).count(), y))
-            .min_by_key(|(_, count)| count) {
+            .min_by_key(|&(count, _)| count) {
                 Some(m) => m,
                 None => {
                     solutions.push_front(self.solution.clone());
@@ -82,16 +94,58 @@ impl Solver {
             };
         if min == 0 { return solutions };
 
-        let removed_rows = Vec::with_capacity(REMOVED_ROWS_CAP);
-        let removed_cols = Vec::with_capacity(REMOVED_COLS_CAP);
-        for row in self.rows.iter().filter(|&x| self.matrix.data[(x, mincol)]) {
-            for column in self.columns.iter().filter(|&y| self.matrix.data[(row, y)]) {
-                for row in self.rows.iter().filter(|&x| self.matrix.data[(x, column)]) {
+        let mut removed_rows = Vec::with_capacity(REMOVED_ROWS_CAP);
+        let mut removed_cols = Vec::with_capacity(REMOVED_COLS_CAP);
+
+        //println!("{}", depth);
+
+        // Had to fake C-style for loops like a pig
+        // because borrow checker wouldn't allow mutating data being iterated over
+        let (tr, tc) = (self.rows.terminal, self.cols.terminal);
+        let mut row = self.rows.data[tr].next;
+        while row != tr {
+            if self.matrix.data[(row, mincol)] {
+                let mut col = self.cols.data[tc].next;
+                while col != tc {
+                    if self.matrix.data[(row, col)] {
+                        let mut r = self.rows.data[tr].next;
+                        while r != tr {
+                            if self.matrix.data[(r, col)] {
+                                self.rows.remove(r);
+                                removed_rows.push(r);
+                            }
+                            r = self.rows.data[r].next;
+                        }
+                        self.cols.remove(col);
+                        removed_cols.push(col);
+                    }
+                    col = self.cols.data[col].next;
+                }
+                self.solution.push(row);
+                solutions.append(&mut self.solve_next(depth + 1));
+
+                self.solution.pop();
+                for rr in removed_rows.iter().rev {
+                    self.rows.restore(*rr);
+                }
+                removed_rows.clear();
+                for rc in removed_cols.iter().rev {
+                    self.cols.restore(*rc);
+                }
+                removed_cols.clear();
+            }
+            row = self.rows.data[row].next;
+        }
+
+
+/*       for row in self.rows.iter().filter(|&x| self.matrix.data[(x, mincol)]) {
+            for col in self.cols.iter().filter(|&y| self.matrix.data[(row, y)]) {
+                for row in rows.iter().filter(|&x| self.matrix.data[(x, col)]) {
                     self.rows.remove(row);
                     removed_rows.push(row);
                 }
-                self.columns.remove(column);
-                removed_cols.push(column);
+                self.cols.remove(col);
+                removed_cols.push(col);
             }
             self.rows.remove(row);
             removed_rows.push(row);
@@ -102,9 +156,9 @@ impl Solver {
                 self.rows.restore(*rr);
             }
             for rc in removed_cols.iter().rev() {
-                self.columns.restore(*rc);
+                self.cols.restore(*rc);
             }
-        }
+        } */
 
         solutions
     }

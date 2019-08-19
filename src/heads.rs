@@ -2,15 +2,15 @@
 // head of rows and columns
 #[derive(Clone)]
 pub struct Head {
-    previous: usize,
-    next: usize,
+    pub previous: usize,
+    pub next: usize,
 }
 
 // pseudo-linked list of heads
 #[derive(Clone)]
 pub struct HeadList {
-    terminal: usize, // blank, "terminal" head (should be the last node)
-    data: Vec<Head>,
+    pub terminal: usize, // blank, "terminal" head (should be the last node)
+    pub data: Vec<Head>,
 }
 
 impl HeadList {

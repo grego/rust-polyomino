@@ -6,7 +6,7 @@ pub mod tiles;
 
 use tiles::Tiles;
 use image::Image;
-use solver::CoverMatrix;
+use solver::{CoverMatrix, Solver};
 
 use std::fs::File;
 use std::io::{stdin, BufReader};
@@ -16,10 +16,13 @@ fn main() -> std::io::Result<()> {
     let f = BufReader::new(f);
     let tiles = Tiles::load(f);
 
-    let image = Image::load(stdin().lock(), 'x');
+    let i = File::open("images/chess")?;
+    let i = BufReader::new(i);
+    let image = Image::load(i, 'x');
     let matrix = CoverMatrix::build(&image, &tiles);
 
-    //println!("{:?}", matrix);
+
+    println!("{}", Solver::new(matrix).solve_next(0).len());
 
     Ok(())
 }
