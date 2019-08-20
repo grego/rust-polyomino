@@ -5,3 +5,11 @@ authors = ["Maros Grego"]
 edition = "2018"
 
 [dependencies]
+
+[lib]
+name = "polyomino"
+path = "src/lib.rs"
+
+[[bin]]
+name = "polyomino-solve"
+path = "src/main.rs"

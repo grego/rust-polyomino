@@ -1,3 +1,4 @@
+use std::ops::Index;
 
 // head of rows and columns
 #[derive(Clone)]
@@ -10,7 +11,7 @@ pub struct Head {
 #[derive(Clone)]
 pub struct HeadList {
     pub terminal: usize, // blank, "terminal" head (should be the last node)
-    pub data: Vec<Head>,
+    data: Vec<Head>,
 }
 
 impl HeadList {
@@ -57,11 +58,20 @@ impl<'a> Iterator for HeadListIter<'a> {
     type Item = usize;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.list.data[self.current].next != self.list.terminal {
-            self.current = self.list.data[self.current].next;
+        if self.list[self.current].next != self.list.terminal {
+            self.current = self.list[self.current].next;
             Some(self.current)
         } else {
             None
         }
     }
 }
+
+impl Index<usize> for HeadList {
+    type Output = Head;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        self.data.index(index)
+    }
+}
+

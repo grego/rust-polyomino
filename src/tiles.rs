@@ -29,7 +29,7 @@ impl Tile {
             .filter_map(|w| w.parse().ok())
             .collect::<Vec<_>>()
             .chunks_exact(2)
-            .take(255)
+            .take(254)
             .map(|c| Point { x: c[0], y: c[1] })
             .collect();
         Some(Tile { kind, points })
