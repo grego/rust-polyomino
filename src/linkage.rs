@@ -156,6 +156,7 @@ impl Linkage {
 
     fn cover_col(&mut self, col: usize) {
         if col >= self.pointcount {
+            if self.allow_repeat { return; }
             self.max_possible -= self.maxima[col - self.pointcount] as usize;
         }
         
@@ -175,6 +176,7 @@ impl Linkage {
 
     fn uncover_col(&mut self, col: usize) {
         if col >= self.pointcount {
+            if self.allow_repeat { return; }
             self.max_possible += self.maxima[col - self.pointcount] as usize;
         }
         
@@ -194,13 +196,15 @@ impl Linkage {
 
     fn is_empty(&self) -> bool {
         let head = self.width;
-        self[head].right == head
+        let i = self[head].right;
+        !(i != head
+            && ((!self.allow_repeat && self.remaining == self.max_possible) || i < self.pointcount))
     }
 
     fn find_min(&self) -> (usize, usize) {
         let head = self.width;
         let mut i = self[head].right;
-        let (mut min, mut mincol) = (std::usize::MAX, head);
+        let (mut min, mut mincol) = (std::usize::MAX, 0);
         while i != head
             && ((!self.allow_repeat && self.remaining == self.max_possible) || i < self.pointcount)
         {
