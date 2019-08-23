@@ -11,9 +11,8 @@ pub struct Tile {
 }
 
 pub struct Tiles {
-    pub used: HashMap<char, usize>, // for looking up what types have already been found
-    pub lookup: Vec<char>,          // for assigning char identifiers back to tiles
-    pub data: Vec<Tile>,
+    kinds: Vec<char>,
+    data: Vec<Tile>,
 }
 
 impl Tile {
@@ -39,12 +38,24 @@ impl Tile {
 impl Tiles {
     pub fn load(reader: impl std::io::BufRead) -> Self {
         let mut used = HashMap::new();
-        let mut lookup = Vec::new();
+        let mut kinds = Vec::new();
         let data = reader
             .lines()
             .filter_map(Result::ok)
-            .filter_map(|s| Tile::parse(&s, &mut used, &mut lookup))
+            .filter_map(|s| Tile::parse(&s, &mut used, &mut kinds))
             .collect();
-        Tiles { used, lookup, data }
+        Tiles { kinds, data }
+    }
+
+    pub fn kinds_count(&self) -> usize {
+        self.kinds.len()
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = &Tile> + '_ {
+        self.data.iter()
+    }
+
+    pub fn name(&self, kind: usize) -> char {
+        self.kinds[kind]
     }
 }

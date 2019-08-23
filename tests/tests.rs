@@ -1,12 +1,9 @@
-#![feature(test)]
-
-use polyomino::image::Image;
-use polyomino::solver::Solver;
 use polyomino::tiles::Tiles;
+use polyomino::image::Image;
+use polyomino::linkage::Linkage;
 
 use std::fs::File;
-use std::io::{stdin, BufReader};
-use std::time::{Duration, Instant};
+use std::io::BufReader;
 
 #[test]
 fn pentomino_chess() {
@@ -18,10 +15,6 @@ fn pentomino_chess() {
     let i = BufReader::new(i);
     let image = Image::load(i, 'x');
 
-    let start = Instant::now();
-    let solutions = Solver::new(&image, &tiles, false).solve_next(0);
-    let duration = start.elapsed();
-
-    println!("All solutions for pentomino chess found in: {:?}", duration);
+    let solutions = Linkage::build(&image, &tiles, false).find_solutions();
     assert_eq!(solutions.len(), 520);
 }
