@@ -14,7 +14,7 @@ program, then (according to the user's choice) finds one or all possible
 covers of the image by the polyomino tiles.
 
 
-| ![image](png/pentomino.png) | ![image](png/polytiling.png) |
+| ![image](png/pentomino.png) | <img src="png/polytiling.png" width=250 /> |
 | -------- | -------- |
 | Example: pentomino tiles     | One cover by pentomino tiles      |
 
