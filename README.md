@@ -69,6 +69,8 @@ OPTIONS:
     -w <wchar>            Interpret <wchar> as "filled" pixel in the input [default: x]
 ```
 
+Sample images, resp. sets of blocks can be found in `images/`, resp. `tiles/` directory.
+
 In the `blockfile`, every lines represents one rendition of some
 polyomino tile. The first character of the line identifies the class of
 the tile. Every tile consists of at least one pixel, implicitly located
