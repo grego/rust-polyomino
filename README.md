@@ -171,7 +171,7 @@ The whole structure is completely memory safe. The first few branches of possibi
 Performance
 =======
 
-Various tests can be run using `cargo test –release`, testing all the
+Various tests can be run using `cargo test –-release`, testing all the
 options. Currently, the program passes every test.
 
 All the benchmarks were done at the author's computer (2011 Intel Core
