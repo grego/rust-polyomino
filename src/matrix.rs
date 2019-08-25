@@ -8,6 +8,7 @@ pub struct Matrix<T> {
     data: Vec<T>,
 }
 
+// An iterator over Matrix rows
 pub struct MatrixRowIter<'a, T> {
     current: usize,
     matrix: &'a Matrix<T>,

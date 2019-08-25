@@ -351,6 +351,7 @@ impl Linkage {
         self.solve_next(0, find_all)
     }
 
+    // Convert the solution into a readable form
     pub fn show_solution(&self, solution: &Solution, image: &Image, tiles: &Tiles) -> String {
         let mut canvas = Matrix::new_fixed(2 * image.width() + 1, 2 * image.height() + 1, ' ');
         for &i in solution {
