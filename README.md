@@ -48,7 +48,7 @@ blocks defined in `blockfile`. The program perceives some isomorphic
 covers (with respect to rotation or reflection) as separate covers.
 
 The input needs to be a valid UTF-8 text. The program runs through
-separate characters (opposed to the *grapheme clusters*, usually
+separate code points (opposed to the *grapheme clusters*, usually
 perceived as separate letters), so it is recommended to only use the
 characters that are displayed separately.
 
